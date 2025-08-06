@@ -1,74 +1,86 @@
-# Analysis of a Suspected Phishing Email  
-
-## Introduction  
-Phishing attacks are one of the most common ways cybercriminals attempt to steal sensitive information.  
-In this document, I am examining a suspicious email that appears to be from a bank.  
-The aim is to break down its content and technical details to understand how it tries to deceive the user and why it should be treated as unsafe.  
+# Investigation Report: USPS-Themed Phishing Email Delivering NetSupport RAT
 
 ---
 
-## Snapshot of the Email  
-- **Subject Line:** Action Required: Verify Your Account Immediately  
-- **From Address:** support@securebank.com (spoofed address)  
-- **Date Received:** 05-Aug-2025  
+## Overview
+On December 28, 2022, a phishing email disguised as a **USPS delivery notification** was identified.  
+The message attempted to trick recipients into clicking malicious links by claiming that a shipment would be delivered soon.  
+Further analysis confirmed that this email was part of a campaign delivering **NetSupport RAT (Remote Access Trojan)**.  
+
+---
+
+## Key Email Details
+- **Date Received:** 28-Dec-2022  
+- **Subject Line:** USPS.com package is at the store ready for delivery  
+- **From:** USPostalService <waiania@soclar.net>  
+- **Sender IP Address:** 35.196.193.120  
+- **Return-Path:** waiania@soclar.net  
+- **Authentication:** SPF – Failed, DKIM – Not Present, DMARC – Missing  
 - **Attachments:** None  
-- **Embedded Links:** 1 login link  
-
-The email pushes the user to verify their banking account without delay, which already raises doubts about its authenticity.  
+- **Links:** Multiple embedded hyperlinks leading to non-USPS domains  
 
 ---
 
-## Signs That Indicate Phishing  
-1. **Mismatch in Sender Information**  
-   The displayed email address looks official, but the actual sending server is unrelated to the real bank.  
+## Indicators of Malicious Intent
 
-2. **Pressure Tactics**  
-   Words like *“Immediately”* and *“Action Required”* are commonly used to make the recipient act quickly.  
+1. **Authentication Failures**  
+   - SPF checks failed since the IP was not authorized for the soclar.net domain.  
+   - DKIM signatures were absent, and no DMARC policy was configured.  
+   - These failures strongly suggest spoofing.  
 
-3. **Deceptive Hyperlink**  
-   While the link text looks safe (`https://securebank.com/login`), hovering over it shows it redirects to  
-   `http://malicious-server.net/auth`.  
+2. **Suspicious Domain**  
+   - The sending domain `soclar.net` is not linked to USPS operations.  
+   - Used exclusively to mislead recipients.  
 
-4. **Unprofessional Language**  
-   Mistakes such as *“verify your informations”* suggest that it was not written by a legitimate bank official.  
+3. **Urgency & Fake Package Notification**  
+   - The email claimed the parcel would arrive *within 60 minutes*.  
+   - Such urgency is a classic phishing technique to pressure quick clicks.  
 
-5. **No Personalization**  
-   Instead of addressing the recipient by name, it simply uses *“Dear Customer.”*  
+4. **Deceptive Hyperlinks**  
+   - Hovering over embedded text showed redirects to domains like:  
+     - `http://lbbqyrluzu.cracknight23jm2-92501940h6.com/...`  
+   - These clearly do not belong to USPS.  
 
----
-
-## Header Analysis  
-- **Source IP:** 185.231.223.45 (does not belong to the real bank)  
-- **SPF Validation:** Failed  
-- **DKIM:** Absent  
-- **DMARC Policy:** Not found  
-
-The above checks confirm that the message is not from the actual domain it pretends to be.  
+5. **Generic Greeting**  
+   - The email opened with “Hello,” instead of the recipient’s name.  
+   - Legitimate USPS emails typically include customer-specific details.  
 
 ---
 
-## Possible Consequences if Trusted  
-- **Theft of Login Credentials** — Victims may unknowingly provide their username and password.  
-- **Financial Fraud** — Attackers could gain access to bank accounts.  
-- **Misuse of Personal Information** — Data provided could be sold or used for further scams.  
+## Technical Header Review
+- **X-Sender-IP:** 35.196.193.120  
+- **Received From:** 218bc2699d9479f46ce65e550af1150d3 (unverified relay)  
+- **Authentication Results:** SPF=Fail, DKIM=None, DMARC=Fail  
+- **Message-ID:** <a7522897db99398bc064fe4185ae30f710c50@soclar.net>  
+
+These attributes confirm the sender server is untrusted and unrelated to USPS.  
 
 ---
 
-## Recommended Actions  
-- Do **not** click the provided link or respond to the email.  
-- Report the suspicious message to the real bank’s support team.  
-- Block the sender’s email address and IP.  
-- Advise users to double-check links before clicking them.  
-- Ensure devices are scanned for any malware.  
+## Risks to Victims
+- **Malware Installation:** Clicking the links initiates download of **NetSupport RAT**, giving attackers remote control over the device.  
+- **Credential Harvesting:** Victims may unknowingly provide login information.  
+- **Financial Exploitation:** Access to personal or banking accounts can lead to fraud.  
+- **Data Breach:** Sensitive files and communications could be exfiltrated.  
 
 ---
 
-## Conclusion  
-Based on the content and technical checks, this email is confirmed to be a **phishing attempt**.  
-It uses urgency, fake links, and poor personalization to trick the recipient.  
-Raising awareness among users and reporting such emails promptly are the best defenses against these kinds of attacks.  
+## Defense Recommendations
+- **Do Not Click:** Avoid interacting with any links in suspicious emails.  
+- **Report the Incident:** Forward the email to USPS security and mark it as phishing.  
+- **Block Malicious IP/Domains:** Deny traffic from IP 35.196.193.120 and domains linked in the email.  
+- **Enable Strong Filters:** Ensure mail servers enforce SPF, DKIM, and DMARC checks.  
+- **Raise User Awareness:** Educate users to recognize fake delivery notices and urgent messages.  
+- **Endpoint Security:** Keep antivirus and anti-malware tools up to date.  
 
 ---
 
-*Prepared by: Neha Chowdary*  
+## Final Verdict
+The email analyzed is a **phishing attempt** designed to impersonate USPS and deliver the **NetSupport RAT**.  
+Its structure, failed authentication, fake links, and urgency tactics make it a clear security threat.  
+Immediate blocking and user awareness are crucial to preventing compromise.  
+
+---
+
+*Report Author: Neha Chowdary*  
 *Date: 06-Aug-2025*
